@@ -10,7 +10,10 @@
 /.vscode/
 /.cxx/
 /.conan/
+.conan2/
 /.venv/
+/packaging/conan/test_package/build/
+/packaging/conan/test_package/CMakeUserPresets.json
 *.user
 *.obj
 *.o
@@ -22,4 +25,3 @@
 *.orig
 *.zip
 *.tar.gz
-
