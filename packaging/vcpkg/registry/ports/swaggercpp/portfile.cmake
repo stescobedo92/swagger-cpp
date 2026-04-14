@@ -1,0 +1,22 @@
+set(REPO_ROOT "${CURRENT_PORT_DIR}/../../../..")
+set(SOURCE_PATH "${CURRENT_BUILDTREES_DIR}/src/${PORT}-src")
+
+file(REMOVE_RECURSE "${SOURCE_PATH}")
+file(COPY "${REPO_ROOT}/" DESTINATION "${SOURCE_PATH}"
+    PATTERN ".git" EXCLUDE
+    PATTERN "build" EXCLUDE
+    PATTERN "out" EXCLUDE
+    PATTERN ".vs" EXCLUDE)
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        -DSWAGGERCPP_BUILD_TESTS=OFF
+        -DSWAGGERCPP_BUILD_BENCHMARKS=OFF
+        -DSWAGGERCPP_BUILD_EXAMPLES=OFF)
+
+vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(PACKAGE_NAME swaggercpp CONFIG_PATH lib/cmake/swaggercpp)
+
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(INSTALL "${SOURCE_PATH}/LICENSE" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)

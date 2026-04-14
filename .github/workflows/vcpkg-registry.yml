@@ -1,0 +1,29 @@
+name: vcpkg-registry
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "packaging/vcpkg/**"
+      - "CMakeLists.txt"
+      - "include/**"
+      - "src/**"
+
+jobs:
+  verify-port:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg "$env:RUNNER_TEMP\vcpkg"
+          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+
+      - name: Validate overlay port
+        shell: pwsh
+        run: |
+          & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install swaggercpp --overlay-ports="$PWD\packaging\vcpkg\ports" --classic

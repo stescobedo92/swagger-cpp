@@ -1,0 +1,43 @@
+name: conan-publish
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  conan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Conan
+        run: python -m pip install --upgrade pip conan
+
+      - name: Detect profile
+        run: conan profile detect --force
+
+      - name: Create package
+        run: conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
+
+      - name: Upload package
+        if: github.event_name == 'push'
+        env:
+          CONAN_REMOTE_URL: ${{ secrets.CONAN_REMOTE_URL }}
+          CONAN_REMOTE_NAME: ${{ secrets.CONAN_REMOTE_NAME }}
+          CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+          CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+        run: |
+          if [ -n "$CONAN_REMOTE_URL" ] && [ -n "$CONAN_REMOTE_NAME" ]; then
+            conan remote add "$CONAN_REMOTE_NAME" "$CONAN_REMOTE_URL" --force
+            conan remote login "$CONAN_REMOTE_NAME" "$CONAN_LOGIN_USERNAME" -p "$CONAN_PASSWORD"
+            conan upload "swaggercpp/*" -r "$CONAN_REMOTE_NAME" --confirm
+          else
+            echo "Conan remote secrets are not configured; skipping upload."
+          fi

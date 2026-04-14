@@ -1,0 +1,10 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: swaggercpp
+Description: Professional C++23 library for Swagger/OpenAPI handling
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lswaggercpp
+Cflags: -I${includedir}

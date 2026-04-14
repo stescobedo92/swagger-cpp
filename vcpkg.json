@@ -1,0 +1,12 @@
+{
+  "name": "swaggercpp",
+  "version-string": "0.1.0",
+  "description": "Professional C++23 library for Swagger/OpenAPI parsing, validation, traversal, and serialization.",
+  "builtin-baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4",
+  "dependencies": [
+    "benchmark",
+    "gtest",
+    "nlohmann-json",
+    "yaml-cpp"
+  ]
+}

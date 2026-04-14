@@ -1,0 +1,47 @@
+name: release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: lukka/get-cmake@latest
+
+      - name: Bootstrap vcpkg
+        shell: bash
+        run: |
+          git clone https://github.com/microsoft/vcpkg "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh"
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_TOOLCHAIN_FILE=$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DSWAGGERCPP_BUILD_TESTS=OFF
+          -DSWAGGERCPP_BUILD_BENCHMARKS=OFF
+          -DSWAGGERCPP_BUILD_EXAMPLES=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package source and install tree
+        run: |
+          cmake --install build --prefix staging
+          tar -czf swaggercpp-${GITHUB_REF_NAME}-source.tar.gz .
+          tar -czf swaggercpp-${GITHUB_REF_NAME}-install.tar.gz staging
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            swaggercpp-${{ github.ref_name }}-source.tar.gz
+            swaggercpp-${{ github.ref_name }}-install.tar.gz
+

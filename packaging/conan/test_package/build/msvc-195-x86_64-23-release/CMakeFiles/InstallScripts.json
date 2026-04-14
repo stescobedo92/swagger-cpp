@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/stesc/Projects/swagger-cpp/packaging/conan/test_package/build/msvc-195-x86_64-23-release/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
