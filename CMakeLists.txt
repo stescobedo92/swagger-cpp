@@ -16,12 +16,14 @@ option(SWAGGERCPP_ENABLE_WARNINGS "Enable strict warnings" ON)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
+find_package(httplib CONFIG REQUIRED)
 
 add_library(swaggercpp
     src/document.cpp
     src/detail/json_utils.cpp
     src/detail/yaml_utils.cpp
     src/reader.cpp
+    src/ui.cpp
     src/walker.cpp
     src/validator.cpp
     src/writer.cpp)
@@ -40,7 +42,9 @@ target_include_directories(swaggercpp
 target_link_libraries(swaggercpp
     PUBLIC
         nlohmann_json::nlohmann_json
-        yaml-cpp::yaml-cpp)
+        yaml-cpp::yaml-cpp
+    PRIVATE
+        httplib::httplib)
 
 target_compile_definitions(swaggercpp
     PRIVATE SWAGGERCPP_BUILDING_LIBRARY
@@ -111,12 +115,14 @@ if(SWAGGERCPP_BUILD_TESTS)
 
     add_executable(swaggercpp-tests
         tests/reader_tests.cpp
+        tests/ui_tests.cpp
         tests/validator_tests.cpp
         tests/writer_tests.cpp)
 
     target_link_libraries(swaggercpp-tests
         PRIVATE
             swaggercpp::swaggercpp
+            httplib::httplib
             GTest::gtest_main)
 
     target_compile_features(swaggercpp-tests PRIVATE cxx_std_23)
@@ -139,7 +145,7 @@ if(SWAGGERCPP_BUILD_BENCHMARKS)
 endif()
 
 if(SWAGGERCPP_BUILD_EXAMPLES)
-    foreach(example_name IN ITEMS load_validate build_petstore mutate_document)
+    foreach(example_name IN ITEMS load_validate build_petstore mutate_document serve_ui)
         add_executable(${example_name} examples/${example_name}.cpp)
         target_link_libraries(${example_name} PRIVATE swaggercpp::swaggercpp)
         target_compile_features(${example_name} PRIVATE cxx_std_23)

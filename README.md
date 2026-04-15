@@ -8,6 +8,7 @@
 - JSON and YAML parsing/serialization
 - Validation pipeline with actionable issues
 - Visitor/walker API for tooling and transformations
+- Embedded Swagger UI server that can open the browser when your binary starts
 - Unit tests with GoogleTest
 - Microbenchmarks with Google Benchmark
 - Consumer-facing CMake package exports
@@ -36,6 +37,8 @@ This project was shaped with updated guidance gathered through Context7 for:
 - `Google Benchmark`: `find_package(benchmark CONFIG REQUIRED)` with `benchmark::benchmark` and `benchmark::benchmark_main`
 - `nlohmann/json`: safe custom serialization patterns with explicit field handling
 - `yaml-cpp`: node-type-aware parsing and YAML emission
+- `cpp-httplib`: embedded HTTP server via `httplib::Server` and `httplib::httplib`
+- `Swagger UI`: `SwaggerUIBundle` plus `SwaggerUIStandalonePreset` with a local `openapi.json` route
 
 ## Build
 
@@ -56,6 +59,42 @@ cmd /c '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsD
 Measured locally in this environment:
 
 - `BM_ParseDocument`: about `17.4 us` CPU per iteration on the current sample payload
+
+## Embedded Swagger UI
+
+If you want an application built with `swaggercpp` to open a browser and show Swagger UI at runtime, use `SwaggerUiServer::start(...)`:
+
+```cpp
+#include "swaggercpp/swaggercpp.hpp"
+
+int main() {
+    swaggercpp::Document document;
+    document.openapi = "3.1.0";
+    document.info.title = "Customer API";
+    document.info.version = "1.0.0";
+
+    swaggercpp::Operation operation;
+    operation.operation_id = "listCustomers";
+    operation.responses.emplace("200", swaggercpp::Response {.description = "ok"});
+
+    swaggercpp::PathItem path_item;
+    path_item.operations.emplace(swaggercpp::HttpMethod::get, operation);
+    document.paths.emplace("/customers", path_item);
+
+    auto session = swaggercpp::SwaggerUiServer::start(document, {
+        .title = "Customer API Docs",
+    });
+
+    if (!session) {
+        return 1;
+    }
+
+    session.value().wait();
+    return 0;
+}
+```
+
+This starts a local HTTP server, serves Swagger UI plus `/openapi.json`, opens the default browser automatically, and keeps the process alive until the app exits.
 
 ## Conan
 
@@ -80,6 +119,7 @@ For a registry-based flow, point `vcpkg-configuration.json` to `packaging/vcpkg/
 - `examples/load_validate.cpp`
 - `examples/build_petstore.cpp`
 - `examples/mutate_document.cpp`
+- `examples/serve_ui.cpp`
 
 ## Roadmap
 

@@ -5,6 +5,7 @@
   "builtin-baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4",
   "dependencies": [
     "benchmark",
+    "cpp-httplib",
     "gtest",
     "nlohmann-json",
     "yaml-cpp"

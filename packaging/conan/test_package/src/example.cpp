@@ -24,4 +24,3 @@ int main() {
     std::cout << document.value().info.title << '\n';
     return 0;
 }
-

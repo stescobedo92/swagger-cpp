@@ -30,6 +30,7 @@ class SwaggerCppRecipe(ConanFile):
             del self.options.fPIC
 
     def requirements(self):
+        self.requires("cpp-httplib/[>=0.18 <1]")
         self.requires("nlohmann_json/[>=3.12 <4]")
         self.requires("yaml-cpp/[>=0.8 <1]")
 

@@ -11,6 +11,7 @@ class SwaggerCppTestPackage(ConanFile):
     generators = ()
 
     def requirements(self):
+        self.requires("cpp-httplib/0.39.0")
         self.requires(self.tested_reference_str)
         self.requires("nlohmann_json/3.12.0")
         self.requires("yaml-cpp/0.9.0")
