@@ -34,9 +34,9 @@ jobs:
 
       - name: Package source and install tree
         run: |
-          cmake --install build --prefix staging
-          tar -czf swaggercpp-${GITHUB_REF_NAME}-source.tar.gz .
-          tar -czf swaggercpp-${GITHUB_REF_NAME}-install.tar.gz staging
+          cmake --install build --prefix "$RUNNER_TEMP/staging"
+          git archive --format=tar.gz --output="swaggercpp-${GITHUB_REF_NAME}-source.tar.gz" HEAD
+          tar -C "$RUNNER_TEMP" -czf "swaggercpp-${GITHUB_REF_NAME}-install.tar.gz" staging
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
@@ -44,4 +44,3 @@ jobs:
           files: |
             swaggercpp-${{ github.ref_name }}-source.tar.gz
             swaggercpp-${{ github.ref_name }}-install.tar.gz
-

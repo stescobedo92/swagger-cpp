@@ -1,6 +1,6 @@
 {
   "name": "swaggercpp",
-  "version-semver": "0.2.0",
+  "version-semver": "0.2.1",
   "description": "Professional C++23 library for Swagger/OpenAPI parsing, validation, traversal, and serialization.",
   "license": "MIT",
   "dependencies": [

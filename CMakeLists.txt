@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 
 project(
     swaggercpp
-    VERSION 0.2.0
+    VERSION 0.2.1
     DESCRIPTION "Professional C++23 library for reading, writing, validating, and traversing Swagger/OpenAPI documents."
     LANGUAGES CXX)
 

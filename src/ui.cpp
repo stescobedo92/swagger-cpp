@@ -144,7 +144,7 @@ bool open_browser(std::string_view url) {
 
 struct SwaggerUiSession::Impl {
     std::unique_ptr<httplib::Server> server;
-    std::jthread server_thread;
+    std::thread server_thread;
     std::string host;
     std::string ui_path;
     std::string spec_path;
@@ -279,7 +279,7 @@ Result<SwaggerUiSession> SwaggerUiServer::start(const Document& document, Swagge
     impl->running.store(true);
     auto* server = impl->server.get();
     auto* running = &impl->running;
-    impl->server_thread = std::jthread([server, running]() {
+    impl->server_thread = std::thread([server, running]() {
         server->listen_after_bind();
         running->store(false);
     });

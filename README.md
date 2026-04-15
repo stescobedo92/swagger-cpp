@@ -166,7 +166,7 @@ include(FetchContent)
 FetchContent_Declare(
   swaggercpp
   GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
-  GIT_TAG v0.2.0
+  GIT_TAG v0.2.1
 )
 
 FetchContent_MakeAvailable(swaggercpp)
@@ -208,7 +208,7 @@ For a registry-based flow, point `vcpkg-configuration.json` to the custom regist
     {
       "kind": "git",
       "repository": "https://github.com/stescobedo92/swagger-cpp.git",
-      "reference": "v0.2.0",
+      "reference": "v0.2.1",
       "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
       "packages": [ "swaggercpp" ]
     }
