@@ -188,10 +188,16 @@ conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
 
 ## vcpkg
 
+Use the official port:
+
+```powershell
+vcpkg install swaggercpp
+```
+
 Use the local overlay port:
 
 ```powershell
-C:\Users\stesc\cpp-packages\vcpkg\vcpkg.exe install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
+~\vcpkg.exe install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
 ```
 
 For a registry-based flow, point `vcpkg-configuration.json` to the custom registry in this GitHub repository.
