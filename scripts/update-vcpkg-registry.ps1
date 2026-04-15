@@ -1,12 +1,14 @@
 $ErrorActionPreference = "Stop"
 
 $portTree = git rev-parse HEAD:packaging/vcpkg/registry/ports/swaggercpp
+$portManifest = Get-Content "$PSScriptRoot\..\packaging\vcpkg\registry\ports\swaggercpp\vcpkg.json" | ConvertFrom-Json
+$version = $portManifest.'version-semver'
 
 $json = @"
 {
   "versions": [
     {
-      "version-semver": "0.1.0",
+      "version-semver": "$version",
       "git-tree": "$portTree"
     }
   ]

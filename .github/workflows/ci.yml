@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
 
 jobs:
@@ -48,4 +48,3 @@ jobs:
         shell: bash
         run: |
           ./build/swaggercpp-benchmarks --benchmark_min_time=0.02s || ./build/Release/swaggercpp-benchmarks.exe --benchmark_min_time=0.02s
-

@@ -158,6 +158,69 @@ target_link_libraries(my_api_docs PRIVATE swaggercpp::swaggercpp)
 target_compile_features(my_api_docs PRIVATE cxx_std_23)
 ```
 
+### Consume with FetchContent from GitHub
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+  swaggercpp
+  GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
+  GIT_TAG v0.2.0
+)
+
+FetchContent_MakeAvailable(swaggercpp)
+
+add_executable(my_api_docs main.cpp)
+target_link_libraries(my_api_docs PRIVATE swaggercpp::swaggercpp)
+target_compile_features(my_api_docs PRIVATE cxx_std_23)
+```
+
+If you use `FetchContent`, make sure `nlohmann_json`, `yaml-cpp`, and `httplib` are available in your toolchain, for example through vcpkg.
+
+## Conan
+
+Create and validate the package:
+
+```powershell
+conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
+```
+
+## vcpkg
+
+Use the local overlay port:
+
+```powershell
+C:\Users\stesc\cpp-packages\vcpkg\vcpkg.exe install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
+```
+
+For a registry-based flow, point `vcpkg-configuration.json` to the custom registry in this GitHub repository.
+
+### Registry consumption example
+
+```json
+{
+  "default-registry": {
+    "kind": "builtin",
+    "baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4"
+  },
+  "registries": [
+    {
+      "kind": "git",
+      "repository": "https://github.com/stescobedo92/swagger-cpp.git",
+      "reference": "v0.2.0",
+      "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
+      "packages": [ "swaggercpp" ]
+    }
+  ]
+}
+```
+
+### CI/CD for vcpkg
+
+- `vcpkg-registry.yml` validates the overlay port on changes to packaging or core library files.
+- `vcpkg-publish.yml` validates the port, refreshes the custom registry metadata, verifies the registry is in sync, and publishes a zipped registry bundle as a workflow artifact and GitHub release asset on tags.
+
 ## Examples
 
 - `examples/load_validate.cpp`

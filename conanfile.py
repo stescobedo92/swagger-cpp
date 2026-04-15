@@ -6,7 +6,7 @@ from conan.tools.files import copy
 
 class SwaggerCppRecipe(ConanFile):
     name = "swaggercpp"
-    version = "0.1.0"
+    version = "0.2.0"
     package_type = "library"
     license = "MIT"
     author = "Sergio Triana Escobedo"
