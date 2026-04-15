@@ -14,7 +14,6 @@
 - Consumer-facing CMake package exports
 - Conan recipe and test package
 - vcpkg overlay/custom-registry packaging assets
-- GitHub Actions for CI, packaging, and release automation
 
 ## Architecture
 
@@ -26,39 +25,6 @@
 - `packaging/conan`: Conan consumer validation package
 - `packaging/vcpkg`: overlay/custom-registry assets and helper scripts
 - `.github/workflows`: CI/CD pipelines
-
-The parser focuses on OpenAPI 3.0/3.1 first, with partial Swagger 2.0 compatibility surfaced as warnings so the library stays honest about current fidelity.
-
-## Context7-backed decisions
-
-This project was shaped with updated guidance gathered through Context7 for:
-
-- `GoogleTest`: modern CMake usage via `find_package(GTest CONFIG REQUIRED)`, `GTest::gtest_main`, and `gtest_discover_tests`
-- `Google Benchmark`: `find_package(benchmark CONFIG REQUIRED)` with `benchmark::benchmark` and `benchmark::benchmark_main`
-- `nlohmann/json`: safe custom serialization patterns with explicit field handling
-- `yaml-cpp`: node-type-aware parsing and YAML emission
-- `cpp-httplib`: embedded HTTP server via `httplib::Server` and `httplib::httplib`
-- `Swagger UI`: `SwaggerUIBundle` plus `SwaggerUIStandalonePreset` with a local `openapi.json` route
-
-## Build
-
-On this workstation the project is configured through `CMakePresets.json` and the local vcpkg installation:
-
-```powershell
-cmd /c '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevCmd.bat" && "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --preset default'
-cmd /c '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevCmd.bat" && "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --build --preset default --parallel'
-cmd /c '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevCmd.bat" && ctest --test-dir build\default --output-on-failure'
-```
-
-## Benchmark
-
-```powershell
-cmd /c '"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevCmd.bat" && build\default\swaggercpp-benchmarks.exe --benchmark_min_time=0.02s'
-```
-
-Measured locally in this environment:
-
-- `BM_ParseDocument`: about `17.4 us` CPU per iteration on the current sample payload
 
 ## Embedded Swagger UI
 
@@ -191,49 +157,6 @@ add_executable(my_api_docs main.cpp)
 target_link_libraries(my_api_docs PRIVATE swaggercpp::swaggercpp)
 target_compile_features(my_api_docs PRIVATE cxx_std_23)
 ```
-
-## Conan
-
-Create and validate the package:
-
-```powershell
-conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
-```
-
-## vcpkg
-
-Use the local overlay port:
-
-```powershell
-C:\Users\stesc\cpp-packages\vcpkg\vcpkg.exe install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
-```
-
-For a registry-based flow, point `vcpkg-configuration.json` to `packaging/vcpkg/registry`.
-
-### Registry consumption example
-
-```json
-{
-  "default-registry": {
-    "kind": "builtin",
-    "baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4"
-  },
-  "registries": [
-    {
-      "kind": "git",
-      "repository": "https://github.com/your-org/swagger-cpp.git",
-      "reference": "v0.1.0",
-      "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
-      "packages": [ "swaggercpp" ]
-    }
-  ]
-}
-```
-
-### CI/CD for vcpkg
-
-- `vcpkg-registry.yml` validates the overlay port on changes to packaging or core library files.
-- `vcpkg-publish.yml` validates the port again, refreshes the custom registry metadata, verifies the registry is in sync, and publishes a zipped registry bundle as a workflow artifact and GitHub release asset on tags.
 
 ## Examples
 
