@@ -96,6 +96,102 @@ int main() {
 
 This starts a local HTTP server, serves Swagger UI plus `/openapi.json`, opens the default browser automatically, and keeps the process alive until the app exits.
 
+## Usage examples
+
+### Parse and validate a document
+
+```cpp
+#include <iostream>
+
+#include "swaggercpp/swaggercpp.hpp"
+
+int main() {
+    const auto result = swaggercpp::DocumentReader::read(R"(
+openapi: 3.1.0
+info:
+  title: Inventory API
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      operationId: listItems
+      responses:
+        "200":
+          description: ok
+)");
+
+    if (!result) {
+        return 1;
+    }
+
+    swaggercpp::DocumentValidator validator;
+    const auto report = validator.validate(result.value());
+    std::cout << "valid=" << std::boolalpha << report.ok() << '\n';
+    return report.ok() ? 0 : 2;
+}
+```
+
+### Generate OpenAPI JSON from code
+
+```cpp
+#include <iostream>
+
+#include "swaggercpp/swaggercpp.hpp"
+
+int main() {
+    swaggercpp::Document document;
+    document.openapi = "3.1.0";
+    document.info.title = "Billing API";
+    document.info.version = "2026.04";
+
+    swaggercpp::Operation operation;
+    operation.operation_id = "listInvoices";
+    operation.responses.emplace("200", swaggercpp::Response {.description = "ok"});
+
+    swaggercpp::PathItem path_item;
+    path_item.operations.emplace(swaggercpp::HttpMethod::get, operation);
+    document.paths.emplace("/invoices", path_item);
+
+    const auto json = swaggercpp::DocumentWriter::write_json(document);
+    if (!json) {
+        return 1;
+    }
+
+    std::cout << json.value() << '\n';
+    return 0;
+}
+```
+
+### Serve Swagger UI directly from your app
+
+```cpp
+#include "swaggercpp/swaggercpp.hpp"
+
+int main() {
+    auto session = swaggercpp::SwaggerUiServer::start_file("openapi.yaml", {
+        .title = "My API Docs",
+        .open_browser = true,
+    });
+
+    if (!session) {
+        return 1;
+    }
+
+    session.value().wait();
+    return 0;
+}
+```
+
+### Consume with CMake
+
+```cmake
+find_package(swaggercpp CONFIG REQUIRED)
+
+add_executable(my_api_docs main.cpp)
+target_link_libraries(my_api_docs PRIVATE swaggercpp::swaggercpp)
+target_compile_features(my_api_docs PRIVATE cxx_std_23)
+```
+
 ## Conan
 
 Create and validate the package:
@@ -113,6 +209,31 @@ C:\Users\stesc\cpp-packages\vcpkg\vcpkg.exe install swaggercpp --overlay-ports=p
 ```
 
 For a registry-based flow, point `vcpkg-configuration.json` to `packaging/vcpkg/registry`.
+
+### Registry consumption example
+
+```json
+{
+  "default-registry": {
+    "kind": "builtin",
+    "baseline": "b21ff8f3cadbd8e0b175b49be2dd9202f1f208f4"
+  },
+  "registries": [
+    {
+      "kind": "git",
+      "repository": "https://github.com/your-org/swagger-cpp.git",
+      "reference": "v0.1.0",
+      "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
+      "packages": [ "swaggercpp" ]
+    }
+  ]
+}
+```
+
+### CI/CD for vcpkg
+
+- `vcpkg-registry.yml` validates the overlay port on changes to packaging or core library files.
+- `vcpkg-publish.yml` validates the port again, refreshes the custom registry metadata, verifies the registry is in sync, and publishes a zipped registry bundle as a workflow artifact and GitHub release asset on tags.
 
 ## Examples
 

@@ -1,0 +1,61 @@
+name: vcpkg-publish
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish-registry:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg "$env:RUNNER_TEMP\vcpkg"
+          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+
+      - name: Validate overlay port
+        shell: pwsh
+        run: |
+          & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install swaggercpp --overlay-ports="$PWD\packaging\vcpkg\ports" --classic
+
+      - name: Refresh registry metadata
+        shell: pwsh
+        run: |
+          .\scripts\update-vcpkg-registry.ps1
+
+      - name: Verify registry metadata is current
+        shell: pwsh
+        run: |
+          git diff --exit-code -- packaging/vcpkg/registry
+
+      - name: Pack registry bundle
+        shell: pwsh
+        run: |
+          $bundle = "swaggercpp-vcpkg-registry-${{ github.ref_name }}.zip"
+          if (Test-Path $bundle) {
+            Remove-Item -LiteralPath $bundle -Force
+          }
+          Compress-Archive -Path .\packaging\vcpkg\registry\* -DestinationPath $bundle
+
+      - name: Upload registry artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swaggercpp-vcpkg-registry-${{ github.ref_name }}
+          path: swaggercpp-vcpkg-registry-${{ github.ref_name }}.zip
+
+      - name: Attach registry bundle to GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: swaggercpp-vcpkg-registry-${{ github.ref_name }}.zip
