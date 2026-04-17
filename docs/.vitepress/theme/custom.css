@@ -1,0 +1,102 @@
+/*
+ * swaggercpp — VitePress theme override
+ * Palette inspired by Swagger UI brand colors:
+ *   #85EA2D  signature Swagger green
+ *   #173647  Swagger dark teal
+ *   #61AFFE  Swagger GET-method blue (accent)
+ *   #FCA130  Swagger POST-method orange (warn)
+ *   #F93E3E  Swagger DELETE-method red (danger)
+ */
+
+:root {
+  --vp-c-brand-1: #5AA718;
+  --vp-c-brand-2: #6BC11E;
+  --vp-c-brand-3: #85EA2D;
+  --vp-c-brand-soft: rgba(133, 234, 45, 0.14);
+  --vp-c-brand-mute: rgba(133, 234, 45, 0.08);
+
+  --vp-c-accent: #173647;
+
+  --vp-c-tip-1: #5AA718;
+  --vp-c-tip-2: #6BC11E;
+  --vp-c-tip-3: #85EA2D;
+  --vp-c-tip-soft: rgba(133, 234, 45, 0.14);
+
+  --vp-c-note-1: #2C6AAC;
+  --vp-c-note-2: #3E82C9;
+  --vp-c-note-3: #61AFFE;
+  --vp-c-note-soft: rgba(97, 175, 254, 0.14);
+
+  --vp-c-warning-1: #B66E12;
+  --vp-c-warning-2: #D8851E;
+  --vp-c-warning-3: #FCA130;
+  --vp-c-warning-soft: rgba(252, 161, 48, 0.14);
+
+  --vp-c-danger-1: #B91F1F;
+  --vp-c-danger-2: #D92F2F;
+  --vp-c-danger-3: #F93E3E;
+  --vp-c-danger-soft: rgba(249, 62, 62, 0.14);
+
+  --vp-home-hero-name-color: #5AA718;
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #85EA2D 30%,
+    #173647
+  );
+  --vp-home-hero-image-filter: blur(56px);
+
+  --vp-button-brand-bg: #85EA2D;
+  --vp-button-brand-hover-bg: #6BC11E;
+  --vp-button-brand-active-bg: #5AA718;
+  --vp-button-brand-text: #0E1F0A;
+  --vp-button-brand-hover-text: #0E1F0A;
+  --vp-button-brand-active-text: #0E1F0A;
+  --vp-button-brand-border: transparent;
+}
+
+.dark {
+  --vp-c-brand-1: #85EA2D;
+  --vp-c-brand-2: #6BC11E;
+  --vp-c-brand-3: #5AA718;
+  --vp-c-brand-soft: rgba(133, 234, 45, 0.16);
+
+  --vp-c-bg: #0F1C27;
+  --vp-c-bg-alt: #0B1620;
+  --vp-c-bg-elv: #173647;
+  --vp-c-bg-soft: #1D4154;
+
+  --vp-home-hero-name-color: #85EA2D;
+  --vp-home-hero-image-filter: blur(68px);
+}
+
+/* Landing page hero polish */
+.VPHero .name .clip {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Soften default blocks with a hint of brand tint */
+.custom-block.tip {
+  border-color: var(--vp-c-tip-3);
+}
+
+/* Code block language tag in Swagger green */
+.vp-doc div[class*='language-'] > span.lang {
+  color: var(--vp-c-brand-3);
+}
+
+/* Make <kbd> look like Swagger chips */
+kbd {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  border: 1px solid var(--vp-c-brand-3);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.85em;
+  font-family: var(--vp-font-family-mono);
+}
+
+.dark kbd {
+  color: var(--vp-c-brand-3);
+}
