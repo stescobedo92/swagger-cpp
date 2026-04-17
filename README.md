@@ -1,5 +1,8 @@
 # swaggercpp
 
+[![vcpkg port](https://img.shields.io/badge/vcpkg-swaggercpp-0b7dbb?logo=microsoft&logoColor=white)](https://github.com/microsoft/vcpkg/tree/master/ports/swaggercpp)
+[![Conan Center](https://img.shields.io/badge/Conan-recipe-6699cc?logo=conan&logoColor=white)](https://github.com/stescobedo92/swagger-cpp/tree/master/packaging/conan)
+
 `swaggercpp` is a modern C++23 library for reading, writing, validating, traversing, and packaging Swagger/OpenAPI documents with a professional distribution setup.
 
 ## What it includes
@@ -188,21 +191,54 @@ conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
 
 ## vcpkg
 
-Use the official port:
+`swaggercpp` is published in the official [microsoft/vcpkg](https://github.com/microsoft/vcpkg/tree/master/ports/swaggercpp) registry. The `vcpkg.io` search page may take 1–2 weeks to index a freshly merged port; the Git path above is the authoritative source.
+
+### Classic mode (simplest)
+
+Install globally and consume without a manifest:
 
 ```powershell
 vcpkg install swaggercpp
 ```
 
-Use the local overlay port:
+In `CMakePresets.json`, point CMake at the vcpkg toolchain:
 
-```powershell
-~\vcpkg.exe install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
+```json
+"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 ```
 
-For a registry-based flow, point `vcpkg-configuration.json` to the custom registry in this GitHub repository.
+Then `find_package(swaggercpp CONFIG REQUIRED)` resolves against the global install.
 
-### Registry consumption example
+### Manifest mode (recommended for teams and CI)
+
+Add a `vcpkg.json` to the consumer project:
+
+```json
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "dependencies": [ "swaggercpp" ],
+  "builtin-baseline": "<recent-sha-from-microsoft/vcpkg>"
+}
+```
+
+Get a baseline SHA that already contains `swaggercpp` with:
+
+```powershell
+git -C $env:VCPKG_ROOT rev-parse HEAD
+```
+
+CMake will auto-install dependencies into `out/build/<preset>/vcpkg_installed/` on configure. **Do not mix modes:** if your project has a `vcpkg.json`, the classic global install is ignored, and `swaggercpp` **must** be listed in `dependencies` or `find_package` will fail.
+
+### Local overlay (for contributors)
+
+```powershell
+vcpkg install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
+```
+
+### Custom registry
+
+If you prefer to pin `swaggercpp` from this repository directly (e.g. pre-release or fork consumption), point `vcpkg-configuration.json` at the custom registry shipped here:
 
 ```json
 {
