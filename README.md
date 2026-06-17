@@ -10,6 +10,7 @@
 - Typed document model inspired by the ergonomics of Microsoft.OpenApi for .NET
 - JSON and YAML parsing/serialization
 - Validation pipeline with actionable issues
+- Automatic OpenAPI `$ref` reference resolution and cycle detection
 - Visitor/walker API for tooling and transformations
 - Embedded Swagger UI server that can open the browser when your binary starts
 - Unit tests with GoogleTest
@@ -169,7 +170,7 @@ include(FetchContent)
 FetchContent_Declare(
   swaggercpp
   GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
-  GIT_TAG v0.2.1
+  GIT_TAG v0.3.0
 )
 
 FetchContent_MakeAvailable(swaggercpp)
@@ -250,7 +251,7 @@ If you prefer to pin `swaggercpp` from this repository directly (e.g. pre-releas
     {
       "kind": "git",
       "repository": "https://github.com/stescobedo92/swagger-cpp.git",
-      "reference": "v0.2.1",
+      "reference": "v0.3.0",
       "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
       "packages": [ "swaggercpp" ]
     }

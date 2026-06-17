@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 
 project(
     swaggercpp
-    VERSION 0.2.1
+    VERSION 0.3.0
     DESCRIPTION "Professional C++23 library for reading, writing, validating, and traversing Swagger/OpenAPI documents."
     LANGUAGES CXX)
 
@@ -25,6 +25,8 @@ add_library(swaggercpp
     src/reader.cpp
     src/ui.cpp
     src/walker.cpp
+    src/mutable_walker.cpp
+    src/reference_resolver.cpp
     src/validator.cpp
     src/writer.cpp)
 
@@ -48,7 +50,8 @@ target_link_libraries(swaggercpp
 
 target_compile_definitions(swaggercpp
     PRIVATE SWAGGERCPP_BUILDING_LIBRARY
-    PUBLIC $<$<BOOL:${BUILD_SHARED_LIBS}>:SWAGGERCPP_SHARED>)
+    PUBLIC $<$<BOOL:${BUILD_SHARED_LIBS}>:SWAGGERCPP_SHARED>
+    PUBLIC $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0A00>)
 
 if(SWAGGERCPP_ENABLE_WARNINGS)
     if(MSVC)
@@ -117,7 +120,8 @@ if(SWAGGERCPP_BUILD_TESTS)
         tests/reader_tests.cpp
         tests/ui_tests.cpp
         tests/validator_tests.cpp
-        tests/writer_tests.cpp)
+        tests/writer_tests.cpp
+        tests/reference_resolver_tests.cpp)
 
     target_link_libraries(swaggercpp-tests
         PRIVATE
