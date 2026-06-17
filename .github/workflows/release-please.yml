@@ -16,7 +16,4 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          release-type: cmake
-          extra-files: |
-            vcpkg.json
-            conanfile.py
+          release-type: simple
