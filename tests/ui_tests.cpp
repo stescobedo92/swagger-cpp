@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#undef CPPHTTPLIB_USE_NON_BLOCKING_GETADDRINFO
 #include <httplib.h>
 
 #include "swaggercpp/swaggercpp.hpp"
