@@ -24,7 +24,7 @@ jobs:
         run: conan profile detect --force
 
       - name: Create package
-        run: conan create . --test-folder=packaging/conan/test_package -s compiler.cppstd=23
+        run: conan create . --build=missing --test-folder=packaging/conan/test_package -s compiler.cppstd=23
 
       - name: Upload package
         if: github.event_name == 'push'
