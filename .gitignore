@@ -10,6 +10,7 @@
 /.vscode/
 /.cxx/
 /.conan/
+/docs/.vitepress/.temp/
 .conan2/
 /.venv/
 /packaging/conan/test_package/build/

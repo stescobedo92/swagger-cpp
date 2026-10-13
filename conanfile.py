@@ -6,11 +6,11 @@ from conan.tools.files import copy
 
 class SwaggerCppRecipe(ConanFile):
     name = "swaggercpp"
-    version = "0.3.0"
+    version = "0.4.0"
     package_type = "library"
     license = "MIT"
     author = "Sergio Triana Escobedo"
-    url = "https://github.com/your-org/swagger-cpp"
+    url = "https://github.com/stescobedo92/swagger-cpp"
     description = "Professional C++23 library for Swagger/OpenAPI parsing, validation, traversal, and serialization."
     topics = ("swagger", "openapi", "openapi3", "cpp23", "api")
     settings = "os", "arch", "compiler", "build_type"

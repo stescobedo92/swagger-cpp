@@ -25,7 +25,7 @@ export default defineConfig({
       { text: 'Examples', link: '/examples/' },
       { text: 'Packaging', link: '/packaging/' },
       {
-        text: 'v0.2.1',
+        text: 'v0.4.0',
         items: [
           { text: 'Releases', link: 'https://github.com/stescobedo92/swagger-cpp/releases' },
           { text: 'Changelog', link: 'https://github.com/stescobedo92/swagger-cpp/releases' },
