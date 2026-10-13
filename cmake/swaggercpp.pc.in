@@ -6,5 +6,8 @@ includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 Name: swaggercpp
 Description: Professional C++23 library for Swagger/OpenAPI handling
 Version: @PROJECT_VERSION@
+Requires: nlohmann_json
+Requires.private: @SWAGGERCPP_PC_REQUIRES_PRIVATE@
 Libs: -L${libdir} -lswaggercpp
+Libs.private: @SWAGGERCPP_PC_LIBS_PRIVATE@
 Cflags: -I${includedir}
