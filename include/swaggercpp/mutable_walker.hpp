@@ -25,6 +25,8 @@ public:
 
 class SWAGGERCPP_EXPORT MutableDocumentWalker {
 public:
+    // Visits occurrences with cycle detection after pointer replacement.
+    // Throws std::runtime_error beyond 100000 schema visits or depth 256.
     static void walk(Document& document, MutableDocumentVisitor& visitor);
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -17,6 +18,10 @@ struct Issue {
     IssueSeverity severity {IssueSeverity::error};
     std::string path;
     std::string message;
+    std::string rule_id;
+    std::string source_file;
+    std::optional<std::size_t> line;
+    std::optional<std::size_t> column;
 };
 
 template <typename T>

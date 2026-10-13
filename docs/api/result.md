@@ -13,6 +13,10 @@ struct Issue {
     IssueSeverity severity { IssueSeverity::error };
     std::string   path;      // JSON Pointer-style path, e.g. "/paths/~1pets/get"
     std::string   message;   // human-readable description
+    std::string   rule_id;   // stable validation rule ID, when applicable
+    std::string   source_file;
+    std::optional<std::size_t> line;
+    std::optional<std::size_t> column;
 };
 ```
 

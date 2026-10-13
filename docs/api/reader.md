@@ -10,6 +10,9 @@ Parses OpenAPI content into a `Document`. Autodetects JSON vs YAML. Never throws
 struct ReaderOptions {
     bool allow_yaml { true };                // set false to reject YAML payloads
     bool strict_required_fields { true };    // missing info.title/version -> error; if false, warnings
+    bool track_source_locations { false };   // collect one-based source positions
+    std::size_t max_document_bytes { 16 * 1024 * 1024 };
+    std::size_t max_nesting_depth { 128 };
 };
 ```
 
@@ -30,7 +33,7 @@ Parses in-memory content:
 ```cpp
 auto result = swaggercpp::DocumentReader::read(R"(
 openapi: 3.1.0
-info: { title: Ex, version: 1 }
+info: { title: Ex, version: "1" }
 paths: {}
 )");
 ```
@@ -43,7 +46,11 @@ Reads the file's bytes and delegates to `read`:
 auto result = swaggercpp::DocumentReader::read_file("openapi.yaml");
 ```
 
-The file extension is used as a first-pass hint; content sniffing still decides the final format.
+Content sniffing decides the input format. File reads are bounded by `max_document_bytes`; JSON/YAML nesting is bounded by `max_nesting_depth`. YAML conversion also limits alias expansion to one million nodes and `max_document_bytes` scalar/key bytes, and rejects recursive aliases and duplicate mapping keys.
+
+Enable `track_source_locations` to populate `Document::source_locations`. The validator uses these positions for semantic diagnostics, falling back to the closest containing object for missing fields. `read_file` also populates `source_file`. Location tracking is opt-in to avoid its extra memory and parsing cost for ordinary library consumers.
+
+The reader accepts Swagger 2.0 (partial compatibility), OpenAPI 3.0.x and 3.1.x. Unsupported or conflicting version declarations fail explicitly. Unmodeled fields are retained in `unknown_fields`; preserving a field does not imply semantic validation of that field. See the [document model](/api/document).
 
 ## Return semantics
 

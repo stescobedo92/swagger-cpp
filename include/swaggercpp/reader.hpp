@@ -12,6 +12,9 @@ namespace swaggercpp {
 struct ReaderOptions {
     bool allow_yaml {true};
     bool strict_required_fields {true};
+    bool track_source_locations {false};
+    std::size_t max_document_bytes {16 * 1024 * 1024};
+    std::size_t max_nesting_depth {128};
 };
 
 class SWAGGERCPP_EXPORT DocumentReader {

@@ -22,7 +22,20 @@ void collect_extensions(
 
 void add_extension_properties(const ExtensionMap& extensions, json& target) {
     for (const auto& [key, value] : extensions) {
-        target[key] = value;
+        if (!target.contains(key)) {
+            target[key] = value;
+        }
+    }
+}
+
+void collect_unknown_fields(
+    const json& source,
+    ExtensionMap& target,
+    const std::initializer_list<std::string_view> known_keys) {
+    for (const auto& [key, value] : source.items()) {
+        if (!is_extension_key(key) && std::ranges::find(known_keys, key) == known_keys.end()) {
+            target.emplace(key, value);
+        }
     }
 }
 

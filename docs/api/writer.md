@@ -4,7 +4,13 @@ Header: `swaggercpp/writer.hpp`
 
 Serialises `Document` back to JSON or YAML and offers a round-trip helper for format conversion.
 
+Serialization preserves supported schema constraints and unmodeled fields stored in `unknown_fields`. Explicit empty security/server overrides remain distinct from omitted declarations. This is semantic preservation, not preservation of comments, whitespace, ordering, or every explicitly written default. Conversion does not migrate specification versions.
+
+Recursive `$ref` strings remain references. A manually constructed cyclic `SchemaPtr` graph without a usable reference fails with an issue rather than recursing indefinitely. Prefer retained references or [bundling](/api/references) when preparing recursive documents for output.
+
 ## Options
+
+Serialization bounds typed schema traversal to 256 nesting levels and 100,000 visits. Excessive expansion of a shared schema graph returns a failure issue. Keeping recursive and repeated structures as `$ref` avoids expanding them into repeated inline objects.
 
 ```cpp
 struct WriterOptions {

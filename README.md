@@ -10,7 +10,10 @@
 - Typed document model inspired by the ergonomics of Microsoft.OpenApi for .NET
 - JSON and YAML parsing/serialization
 - Validation pipeline with actionable issues
-- Automatic OpenAPI `$ref` reference resolution and cycle detection
+- Local component `$ref` resolution and bounded multi-file bundling with recursive references preserved
+- Expanded schema constraints, Boolean schemas, type unions, security overrides, webhooks, and preservation of unmodeled fields
+- Configurable validation rules, custom C++ checks, and optional source locations
+- Optional CLI for validation, JSON/YAML conversion, bundling, and Swagger UI
 - Visitor/walker API for tooling and transformations
 - Embedded Swagger UI server that can open the browser when your binary starts
 - Unit tests with GoogleTest
@@ -67,6 +70,19 @@ int main() {
 This starts a local HTTP server, serves Swagger UI plus `/openapi.json`, opens the default browser automatically, and keeps the process alive until the app exits.
 
 ## Usage examples
+
+### Use the command-line tool
+
+Enable `SWAGGERCPP_BUILD_CLI=ON` when configuring CMake, then build and run:
+
+```sh
+swaggercpp-cli validate openapi.yaml --json --strict
+swaggercpp-cli convert openapi.yaml --format json --output openapi.json
+swaggercpp-cli bundle openapi.yaml --root . --output bundled.json
+swaggercpp-cli serve openapi.yaml --no-browser
+```
+
+See [CLI usage](docs/cli.md), [reference support](docs/api/references.md), and [validation rules](docs/api/validator.md). Bundling currently supports relative local file references and JSON Pointer fragments; remote retrieval and schema `$id`/anchor rebasing are not supported. Schema keywords outside the typed subset are preserved, but are not all semantically validated. Swagger 2.0 support remains partial; format conversion is not version migration.
 
 ### Parse and validate a document
 
@@ -275,5 +291,5 @@ If you prefer to pin `swaggercpp` from this repository directly (e.g. pre-releas
 
 - Increase Swagger 2.0 coverage
 - Expand security flows and callbacks/webhooks
-- Add schema/reference resolution layers
-- Add richer diagnostics and source locations
+- Expand reference URI/dialect support beyond local file JSON Pointers
+- Add API compatibility comparison and request/response validation

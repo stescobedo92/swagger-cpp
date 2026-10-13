@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <optional>
@@ -8,10 +10,16 @@
 #include <vector>
 
 #include <nlohmann/json.hpp>
+#include "swaggercpp/export.hpp"
 
 namespace swaggercpp {
 
 using ExtensionMap = std::map<std::string, nlohmann::json>;
+
+struct SourceLocation {
+    std::size_t line {0};
+    std::size_t column {0};
+};
 
 enum class SpecificationVersion {
     swagger_2_0,
@@ -42,18 +50,19 @@ enum class HttpMethod {
     trace
 };
 
-[[nodiscard]] std::string_view to_string(HttpMethod method) noexcept;
-[[nodiscard]] std::string_view to_string(ParameterLocation location) noexcept;
-[[nodiscard]] std::string_view to_string(SpecificationVersion version) noexcept;
+[[nodiscard]] SWAGGERCPP_EXPORT std::string_view to_string(HttpMethod method) noexcept;
+[[nodiscard]] SWAGGERCPP_EXPORT std::string_view to_string(ParameterLocation location) noexcept;
+[[nodiscard]] SWAGGERCPP_EXPORT std::string_view to_string(SpecificationVersion version) noexcept;
 
-[[nodiscard]] std::optional<HttpMethod> http_method_from_string(std::string_view value) noexcept;
-[[nodiscard]] std::optional<ParameterLocation> parameter_location_from_string(std::string_view value) noexcept;
+[[nodiscard]] SWAGGERCPP_EXPORT std::optional<HttpMethod> http_method_from_string(std::string_view value) noexcept;
+[[nodiscard]] SWAGGERCPP_EXPORT std::optional<ParameterLocation> parameter_location_from_string(std::string_view value) noexcept;
 
 struct Contact {
     std::optional<std::string> name;
     std::optional<std::string> url;
     std::optional<std::string> email;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct License {
@@ -61,6 +70,7 @@ struct License {
     std::optional<std::string> url;
     std::optional<std::string> identifier;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Info {
@@ -72,6 +82,7 @@ struct Info {
     std::optional<Contact> contact;
     std::optional<License> license;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct ServerVariable {
@@ -79,6 +90,7 @@ struct ServerVariable {
     std::vector<std::string> enum_values;
     std::optional<std::string> description;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Server {
@@ -86,12 +98,14 @@ struct Server {
     std::optional<std::string> description;
     std::map<std::string, ServerVariable> variables;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct ExternalDocumentation {
     std::string url;
     std::optional<std::string> description;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Tag {
@@ -99,6 +113,7 @@ struct Tag {
     std::optional<std::string> description;
     std::optional<ExternalDocumentation> external_docs;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Schema;
@@ -125,6 +140,33 @@ struct Schema {
     bool write_only {false};
     bool deprecated {false};
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    // A boolean schema takes precedence over the object keywords below.
+    std::optional<bool> boolean_value;
+    // For OpenAPI 3.1 type arrays; nonempty types takes precedence over type.
+    std::vector<std::string> types;
+    std::vector<nlohmann::json> enum_values;
+    bool enum_defined {false};
+    std::optional<nlohmann::json> const_value;
+    // JSON numeric storage preserves integral bounds beyond double precision.
+    std::optional<nlohmann::json> minimum;
+    std::optional<nlohmann::json> maximum;
+    std::optional<nlohmann::json> multiple_of;
+    // OpenAPI 3.0 uses booleans; OpenAPI 3.1 uses numeric bounds.
+    std::optional<nlohmann::json> exclusive_minimum;
+    std::optional<nlohmann::json> exclusive_maximum;
+    std::optional<std::uint64_t> min_length;
+    std::optional<std::uint64_t> max_length;
+    std::optional<std::uint64_t> min_items;
+    std::optional<std::uint64_t> max_items;
+    std::optional<std::uint64_t> min_properties;
+    std::optional<std::uint64_t> max_properties;
+    std::optional<std::string> pattern;
+    std::optional<bool> unique_items;
+    std::optional<std::string> schema_dialect;
+    std::optional<std::string> id;
+    std::optional<std::string> anchor;
+    std::map<std::string, SchemaPtr> defs;
 };
 
 struct MediaType {
@@ -132,6 +174,7 @@ struct MediaType {
     std::optional<nlohmann::json> example;
     std::map<std::string, nlohmann::json> examples;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Parameter {
@@ -145,6 +188,10 @@ struct Parameter {
     SchemaPtr schema;
     std::map<std::string, MediaType> content;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    std::optional<std::string> style;
+    std::optional<bool> explode;
+    std::optional<bool> allow_reserved;
 };
 
 struct RequestBody {
@@ -153,6 +200,8 @@ struct RequestBody {
     std::map<std::string, MediaType> content;
     bool required {false};
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    bool content_defined {false};
 };
 
 struct Response {
@@ -160,6 +209,10 @@ struct Response {
     std::string description;
     std::map<std::string, MediaType> content;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    std::map<std::string, nlohmann::json> headers;
+    std::map<std::string, nlohmann::json> links;
+    bool description_defined {false};
 };
 
 struct Operation {
@@ -173,6 +226,14 @@ struct Operation {
     bool deprecated {false};
     std::vector<std::map<std::string, std::vector<std::string>>> security;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    // An explicitly empty array disables document-level authentication.
+    bool security_defined {false};
+    std::vector<Server> servers;
+    std::map<std::string, nlohmann::json> callbacks;
+    ExtensionMap responses_extensions;
+    bool servers_defined {false};
+    bool responses_defined {false};
 };
 
 struct PathItem {
@@ -182,6 +243,9 @@ struct PathItem {
     std::vector<Parameter> parameters;
     std::map<HttpMethod, Operation> operations;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    std::vector<Server> servers;
+    bool servers_defined {false};
 };
 
 struct SecurityScheme {
@@ -194,6 +258,7 @@ struct SecurityScheme {
     std::optional<std::string> open_id_connect_url;
     std::optional<nlohmann::json> flows;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Components {
@@ -203,6 +268,7 @@ struct Components {
     std::map<std::string, RequestBody> request_bodies;
     std::map<std::string, SecurityScheme> security_schemes;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
 };
 
 struct Document {
@@ -215,6 +281,13 @@ struct Document {
     Components components;
     std::vector<Tag> tags;
     ExtensionMap extensions;
+    ExtensionMap unknown_fields;
+    std::vector<std::map<std::string, std::vector<std::string>>> security;
+    bool security_defined {false};
+    std::map<std::string, PathItem> webhooks;
+    ExtensionMap paths_extensions;
+    std::map<std::string, SourceLocation> source_locations;
+    std::string source_file;
 };
 
 } // namespace swaggercpp

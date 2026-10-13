@@ -20,10 +20,14 @@ public:
     virtual void visit_parameter(const Parameter&) {}
     virtual void visit_response(std::string_view, const Response&) {}
     virtual void visit_schema(const Schema&, std::string_view) {}
+    virtual void visit_request_body(const RequestBody&) {}
 };
 
 class SWAGGERCPP_EXPORT DocumentWalker {
 public:
+    // Visits each schema occurrence, including a cycle's closing edge, but
+    // does not descend into an already active schema. Paths are JSON Pointers.
+    // Throws std::runtime_error beyond 100000 schema visits or depth 256.
     static void walk(const Document& document, DocumentVisitor& visitor);
 };
 

@@ -1,6 +1,6 @@
 # API reference
 
-The `swaggercpp` public API is organised around a typed **document model** and five **subsystems** that operate on it. All symbols live in the `swaggercpp` namespace.
+The `swaggercpp` public API is organised around a typed **document model** and independent subsystems that operate on it. All symbols live in the `swaggercpp` namespace. An optional [CLI](/cli) exposes common workflows.
 
 ## Subsystems at a glance
 
@@ -10,6 +10,7 @@ The `swaggercpp` public API is organised around a typed **document model** and f
 | [DocumentReader](/api/reader)     | `swaggercpp/reader.hpp`     | `DocumentReader::read(_file)`       |
 | [DocumentWriter](/api/writer)     | `swaggercpp/writer.hpp`     | `DocumentWriter::write_{yaml,json}` |
 | [DocumentValidator](/api/validator) | `swaggercpp/validator.hpp` | `DocumentValidator::validate`      |
+| [References and bundling](/api/references) | `swaggercpp/reference_resolver.hpp` | `ReferenceResolver::bundle_file` |
 | [DocumentWalker](/api/walker)     | `swaggercpp/walker.hpp`     | `DocumentWalker::walk`              |
 | [SwaggerUiServer](/api/ui)        | `swaggercpp/ui.hpp`         | `SwaggerUiServer::start(_file)`     |
 | [Result and Issues](/api/result)  | `swaggercpp/result.hpp`     | `Result<T>`, `Issue`, `ValidationReport` |

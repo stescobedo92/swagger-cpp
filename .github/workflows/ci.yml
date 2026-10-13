@@ -35,6 +35,7 @@ jobs:
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
             -DSWAGGERCPP_BUILD_TESTS=ON \
+            -DSWAGGERCPP_BUILD_CLI=ON \
             -DSWAGGERCPP_BUILD_BENCHMARKS=ON \
             -DSWAGGERCPP_BUILD_EXAMPLES=ON
 

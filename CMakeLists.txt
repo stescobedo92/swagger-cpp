@@ -12,6 +12,7 @@ include(CMakePackageConfigHelpers)
 option(SWAGGERCPP_BUILD_TESTS "Build unit tests" ON)
 option(SWAGGERCPP_BUILD_BENCHMARKS "Build benchmarks" ON)
 option(SWAGGERCPP_BUILD_EXAMPLES "Build examples" ON)
+option(SWAGGERCPP_BUILD_CLI "Build the swaggercpp command-line tool" OFF)
 option(SWAGGERCPP_ENABLE_WARNINGS "Enable strict warnings" ON)
 
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -112,12 +113,22 @@ install(
 
 enable_testing()
 
+if(SWAGGERCPP_BUILD_CLI)
+    add_executable(swaggercpp-cli src/cli.cpp)
+    target_link_libraries(swaggercpp-cli PRIVATE swaggercpp::swaggercpp)
+    target_compile_definitions(swaggercpp-cli PRIVATE SWAGGERCPP_VERSION="${PROJECT_VERSION}")
+    set_target_properties(swaggercpp-cli PROPERTIES CXX_EXTENSIONS OFF)
+    install(TARGETS swaggercpp-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+
 if(SWAGGERCPP_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(GoogleTest)
 
     add_executable(swaggercpp-tests
         tests/reader_tests.cpp
+        tests/source_tests.cpp
+        tests/walker_tests.cpp
         tests/ui_tests.cpp
         tests/validator_tests.cpp
         tests/writer_tests.cpp
@@ -131,6 +142,13 @@ if(SWAGGERCPP_BUILD_TESTS)
 
     target_compile_features(swaggercpp-tests PRIVATE cxx_std_23)
     gtest_discover_tests(swaggercpp-tests)
+    if(SWAGGERCPP_BUILD_CLI)
+        add_test(NAME cli.integration
+            COMMAND ${CMAKE_COMMAND}
+                "-DCLI=$<TARGET_FILE:swaggercpp-cli>"
+                "-DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-test"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_tests.cmake")
+    endif()
 endif()
 
 if(SWAGGERCPP_BUILD_BENCHMARKS)
