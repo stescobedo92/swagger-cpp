@@ -9,6 +9,19 @@ on:
       - "CMakeLists.txt"
       - "include/**"
       - "src/**"
+      - "scripts/*vcpkg*"
+      - ".github/workflows/vcpkg-registry.yml"
+  pull_request:
+    paths:
+      - "packaging/**"
+      - "CMakeLists.txt"
+      - "include/**"
+      - "src/**"
+      - "scripts/*vcpkg*"
+      - ".github/workflows/vcpkg-registry.yml"
+
+permissions:
+  contents: read
 
 jobs:
   verify-port:
@@ -16,14 +29,40 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: lukka/get-cmake@latest
+
+      - uses: ilammy/msvc-dev-cmd@v1
 
       - name: Bootstrap vcpkg
         shell: pwsh
         run: |
           git clone https://github.com/microsoft/vcpkg "$env:RUNNER_TEMP\vcpkg"
+          if ($LASTEXITCODE -ne 0) { throw "vcpkg clone failed." }
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+          if ($LASTEXITCODE -ne 0) { throw "vcpkg bootstrap failed." }
 
       - name: Validate overlay port
         shell: pwsh
         run: |
           & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install swaggercpp --overlay-ports="$PWD\packaging\vcpkg\ports" --classic
+          if ($LASTEXITCODE -ne 0) { throw "Overlay port installation failed." }
+
+      - name: Generate portable registry
+        shell: pwsh
+        env:
+          SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          .\scripts\update-vcpkg-registry.ps1 -SourceRepository $env:SOURCE_REPOSITORY
+
+      - name: Validate registry library consumer
+        shell: pwsh
+        run: |
+          .\scripts\test-vcpkg-registry.ps1 -RegistryDirectory build/vcpkg-registry -VcpkgRoot "$env:RUNNER_TEMP/vcpkg" -ConsumerDirectory build/registry-library
+
+      - name: Validate registry CLI consumer
+        shell: pwsh
+        run: |
+          .\scripts\test-vcpkg-registry.ps1 -RegistryDirectory build/vcpkg-registry -VcpkgRoot "$env:RUNNER_TEMP/vcpkg" -Tools -ConsumerDirectory build/registry-tools

@@ -8,6 +8,7 @@
 - Add the optional `swaggercpp-cli` executable with `validate`, `convert`, `bundle`, and `serve` commands, JSON diagnostics, rule configuration, and atomic file output.
 - Bound parsing and traversal work, detect cycles, and improve malformed-input handling.
 - Restore CLI integration coverage and test release artifacts before publishing.
+- Package the CLI through the optional vcpkg `tools` feature and publish a portable filesystem registry with verified source hashes and consumer checks.
 
 ### Compatibility
 
