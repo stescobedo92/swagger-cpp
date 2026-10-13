@@ -7,18 +7,20 @@ on:
     paths:
       - "packaging/vcpkg/**"
       - "CMakeLists.txt"
+      - "vcpkg.json"
       - "include/**"
       - "src/**"
       - "scripts/*vcpkg*"
-      - ".github/workflows/vcpkg-registry.yml"
+      - ".github/workflows/vcpkg-*.yml"
   pull_request:
     paths:
       - "packaging/**"
       - "CMakeLists.txt"
+      - "vcpkg.json"
       - "include/**"
       - "src/**"
       - "scripts/*vcpkg*"
-      - ".github/workflows/vcpkg-registry.yml"
+      - ".github/workflows/vcpkg-*.yml"
 
 permissions:
   contents: read
