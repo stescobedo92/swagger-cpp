@@ -28,12 +28,17 @@ jobs:
         run: >
           cmake -S . -B build -G Ninja
           -DCMAKE_TOOLCHAIN_FILE=$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake
-          -DSWAGGERCPP_BUILD_TESTS=OFF
+          -DCMAKE_BUILD_TYPE=Release
+          -DSWAGGERCPP_BUILD_TESTS=ON
+          -DSWAGGERCPP_BUILD_CLI=ON
           -DSWAGGERCPP_BUILD_BENCHMARKS=OFF
           -DSWAGGERCPP_BUILD_EXAMPLES=OFF
 
       - name: Build
         run: cmake --build build --parallel
+
+      - name: Test release build
+        run: ctest --test-dir build --output-on-failure
 
       - name: Package source and install tree
         run: |

@@ -6,7 +6,7 @@
 
 ```ini
 [requires]
-swaggercpp/0.2.1
+swaggercpp/0.4.0
 
 [generators]
 CMakeDeps

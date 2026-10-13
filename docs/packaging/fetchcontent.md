@@ -13,7 +13,7 @@ include(FetchContent)
 FetchContent_Declare(
   swaggercpp
   GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
-  GIT_TAG        v0.2.1
+  GIT_TAG        v0.4.0
 )
 
 # Silence tests/benchmarks/examples in the fetched build
@@ -44,10 +44,10 @@ A common pattern is to use vcpkg **manifest mode** for the three dependencies an
 
 ## Pinning strategy
 
-Pin by tag (`v0.2.1`), not by branch. Tags are immutable; branches move.
+Pin by tag (`v0.4.0`), not by branch. Tags are immutable; branches move.
 
 ```cmake
-GIT_TAG v0.2.1
+GIT_TAG v0.4.0
 ```
 
 ## Pros and cons

@@ -1,8 +1,0 @@
-{
-  "default": {
-    "swaggercpp": {
-      "baseline": "0.2.1",
-      "port-version": 0
-    }
-  }
-}

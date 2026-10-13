@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 
 project(
     swaggercpp
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "Professional C++23 library for reading, writing, validating, and traversing Swagger/OpenAPI documents."
     LANGUAGES CXX)
 
@@ -146,6 +146,7 @@ if(SWAGGERCPP_BUILD_TESTS)
         add_test(NAME cli.integration
             COMMAND ${CMAKE_COMMAND}
                 "-DCLI=$<TARGET_FILE:swaggercpp-cli>"
+                "-DEXPECTED_VERSION=${PROJECT_VERSION}"
                 "-DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-test"
                 -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_tests.cmake")
     endif()

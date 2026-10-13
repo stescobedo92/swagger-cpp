@@ -186,7 +186,7 @@ include(FetchContent)
 FetchContent_Declare(
   swaggercpp
   GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
-  GIT_TAG v0.3.0
+  GIT_TAG v0.4.0
 )
 
 FetchContent_MakeAvailable(swaggercpp)
@@ -255,7 +255,7 @@ vcpkg install swaggercpp --overlay-ports=packaging\vcpkg\ports --classic
 
 ### Custom registry
 
-If you prefer to pin `swaggercpp` from this repository directly (e.g. pre-release or fork consumption), point `vcpkg-configuration.json` at the custom registry shipped here:
+Download `swaggercpp-vcpkg-registry-v0.4.0.zip` from the [GitHub release](https://github.com/stescobedo92/swagger-cpp/releases/tag/v0.4.0) and extract it to `swaggercpp-registry` next to your consumer's `vcpkg-configuration.json`. This portable filesystem registry pins the source commit and verifies its SHA512:
 
 ```json
 {
@@ -265,20 +265,27 @@ If you prefer to pin `swaggercpp` from this repository directly (e.g. pre-releas
   },
   "registries": [
     {
-      "kind": "git",
-      "repository": "https://github.com/stescobedo92/swagger-cpp.git",
-      "reference": "v0.3.0",
-      "baseline": "<commit-sha-that-contains-packaging/vcpkg/registry/baseline.json>",
+      "kind": "filesystem",
+      "path": "swaggercpp-registry",
+      "baseline": "default",
       "packages": [ "swaggercpp" ]
     }
   ]
 }
 ```
 
+Each bundle contains one release. Enable the optional `tools` feature to install the CLI at `tools/swaggercpp/swaggercpp-cli`:
+
+```json
+"dependencies": [ { "name": "swaggercpp", "features": [ "tools" ] } ]
+```
+
+Contributors can generate a bundle from a pushed commit with `pwsh scripts/update-vcpkg-registry.ps1 -SourceRef <commit>`. The generated registry is written to `build/vcpkg-registry`.
+
 ### CI/CD for vcpkg
 
-- `vcpkg-registry.yml` validates the overlay port on changes to packaging or core library files.
-- `vcpkg-publish.yml` validates the port, refreshes the custom registry metadata, verifies the registry is in sync, and publishes a zipped registry bundle as a workflow artifact and GitHub release asset on tags.
+- `vcpkg-registry.yml` validates the local overlay and builds consumers of the generated registry, including the optional CLI, on pull requests and relevant changes.
+- `vcpkg-publish.yml` generates a registry from the immutable release commit, validates library and CLI consumers, and publishes a zipped registry bundle as a workflow artifact and GitHub release asset on tags.
 
 ## Examples
 

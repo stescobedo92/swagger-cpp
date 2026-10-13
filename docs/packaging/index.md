@@ -25,7 +25,7 @@
 ```ini
 # conanfile.txt
 [requires]
-swaggercpp/0.2.1
+swaggercpp/0.4.0
 ```
 
 ### CMake `find_package`
@@ -40,7 +40,7 @@ target_link_libraries(app PRIVATE swaggercpp::swaggercpp)
 ```cmake
 FetchContent_Declare(swaggercpp
   GIT_REPOSITORY https://github.com/stescobedo92/swagger-cpp.git
-  GIT_TAG v0.2.1)
+  GIT_TAG v0.4.0)
 FetchContent_MakeAvailable(swaggercpp)
 ```
 
