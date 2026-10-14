@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/stescobedo92/swagger-cpp/compare/v0.4.0...v0.4.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* declare pkg-config link dependencies ([bfdc6ba](https://github.com/stescobedo92/swagger-cpp/commit/bfdc6ba5194c7d48f57f6c4472dff24a268a3fb0))
+* declare pkg-config link dependencies ([252c439](https://github.com/stescobedo92/swagger-cpp/commit/252c439efed0e6f725fd8757a7b01cd223e0ce53))
+
 ## 0.4.0
 
 - Preserve more OpenAPI 3.0/3.1 and JSON Schema fields when reading and writing documents, including Boolean schemas, type unions, precise numeric constraints, definitions, callbacks, webhooks, security requirements, and server overrides.
