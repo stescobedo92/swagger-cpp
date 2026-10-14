@@ -102,13 +102,10 @@ install(
     NAMESPACE swaggercpp::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/swaggercpp)
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/swaggercpp.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/swaggercpp.pc
-    @ONLY)
+include(cmake/swaggercppPkgConfig.cmake)
 
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/swaggercpp.pc
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/$<CONFIG>/swaggercpp.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 enable_testing()
